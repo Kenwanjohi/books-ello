@@ -8,7 +8,7 @@ import theme from "./theme";
 import App from "./App.tsx";
 
 const client = new ApolloClient({
-  uri: "https://ello-books.fly.dev/",
+  uri: import.meta.env.VITE_API_URL,
   cache: new InMemoryCache(),
 });
 
