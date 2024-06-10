@@ -1,6 +1,17 @@
-import "./App.css";
-import { Box } from "@mui/material";
+import { useState } from "react";
+
+import { Container, Divider } from "@mui/material";
+
 import { useQuery, gql } from "@apollo/client";
+
+import Header from "./components/Header";
+import SearchBar from "./components/SearchBar";
+import BookList from "./components/BookList";
+import ReadingList from "./components/ReadingList";
+
+import useReadingList from "./hooks/useReadingList";
+
+import { Book } from "./types";
 
 const GET_BOOKS = gql`
   query GetBooks {
@@ -14,17 +25,64 @@ const GET_BOOKS = gql`
 `;
 
 function App() {
-  const { loading, error, data } = useQuery(GET_BOOKS);
+  const [allBooks, setAllBooks] = useState<Book[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
+  const [showReadingList, setShowReadingList] = useState(false);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
-  console.log(data);
+  const {
+    addToReadingList,
+    removeFromReadingList,
+    isBookInReadingList,
+    readingList,
+  } = useReadingList();
+
+  const { loading } = useQuery(GET_BOOKS, {
+    onCompleted: (data) => {
+      setAllBooks(data.books);
+      setFilteredBooks(data.books);
+    },
+  });
+
+  const handleSearch = (query: string) => {
+    if (query) {
+      const filtered = allBooks.filter((book) =>
+        book.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredBooks(filtered);
+    } else {
+      setFilteredBooks(allBooks);
+    }
+  };
 
   return (
-    <>
-      <h1>Search</h1>
-      <Box>List</Box>
-    </>
+    <Container
+      sx={{ textAlign: "left", paddingTop: "2rem", minHeight: "100vh" }}
+    >
+      <Header
+        showReadingList={showReadingList}
+        setShowReadingList={setShowReadingList}
+        readingList={readingList}
+      />
+      <Divider sx={{ mb: 2 }} />
+      {showReadingList ? (
+        <ReadingList
+          readingList={readingList}
+          addToReadingList={addToReadingList}
+          removeFromReadingList={removeFromReadingList}
+          setShowReadingList={setShowReadingList}
+        />
+      ) : (
+        <>
+          <SearchBar onSearch={handleSearch} />
+          <BookList
+            books={filteredBooks}
+            isLoading={loading}
+            isBookInReadingList={isBookInReadingList}
+            addToReadingList={addToReadingList}
+          />
+        </>
+      )}
+    </Container>
   );
 }
 

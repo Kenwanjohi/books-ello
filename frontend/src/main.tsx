@@ -6,10 +6,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme";
 
 import App from "./App.tsx";
-import "./index.css";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/",
+  uri: "https://ello-books.fly.dev/",
   cache: new InMemoryCache(),
 });
 
