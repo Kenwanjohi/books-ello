@@ -1,5 +1,5 @@
 ### Books-Ello
-Books-Ello is a React application designed for instructors to pick learners' books and manage their selections. They can search and browse through a collection of books, and can curate books for their learners.
+Books-Ello is an application designed for instructors to pick learners' books and manage their selections. They can search and browse through a collection of books, and can curate books for their learners.
 
 ## Available Scripts for development
 Before running the commands
